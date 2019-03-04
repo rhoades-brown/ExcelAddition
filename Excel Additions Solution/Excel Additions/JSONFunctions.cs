@@ -207,7 +207,10 @@ namespace Excel_Additions
                 return ExcelError.ExcelErrorRef;
             }
 
-            RecurseObject(sourceObject as JObject, propertyObject, elements);
+            RecurseObject(
+                sourceObject as JObject,
+                propertyObject,
+                elements);
             return sourceObject.ToString(0);
         }
     }
