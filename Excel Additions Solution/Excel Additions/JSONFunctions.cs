@@ -64,7 +64,21 @@ namespace Excel_Additions
                     break;
 
                 default:
-                    resultsArray.Add(item);
+                    if (typeof(string) == item.GetType())
+                    {
+                        try
+                        {
+                            resultsArray.Add(JToken.Parse(item as string));
+                        }
+                        catch
+                        {
+                            resultsArray.Add(item);
+                        }
+                    }
+                    else
+                    {
+                        resultsArray.Add(item);
+                    }
                     break;
             }
         }
@@ -143,20 +157,45 @@ namespace Excel_Additions
             [ExcelArgument(
                    Name = "Value",
                    Description = "value to add to property"
-             )]string value
+             )]object value,
+
+            [ExcelArgument(
+                Name = "[include_empty]",
+                Description = "include empty items"
+            )]bool IncludeEmpty = true
             )
         {
             JToken propertyObject;
             JObject sourceObject;
             string[] elements = property.Split('.');
 
-            try
+            if (typeof(string) == value.GetType())
             {
-                propertyObject = JToken.Parse(value);
+                if (!IncludeEmpty & string.IsNullOrEmpty(value.ToString()))
+                    return source;
+
+                try
+                {
+                    propertyObject = JToken.Parse(value.ToString());
+                }
+                catch
+                {
+                    propertyObject = JToken.FromObject(value.ToString());
+                }
             }
-            catch
+            else
             {
-                propertyObject = JToken.FromObject(value);
+                if (!IncludeEmpty & value.GetType() == typeof(ExcelMissing))
+                    return source;
+
+                try
+                {
+                    propertyObject = JObject.Parse(value as string);
+                }
+                catch
+                {
+                    propertyObject = JToken.FromObject(value);
+                }
             }
 
             try
