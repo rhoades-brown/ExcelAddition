@@ -1,6 +1,7 @@
-﻿using System.Linq;
-using ExcelDna.Integration;
+﻿using ExcelDna.Integration;
 using ExcelDna.Registration;
+using ExcelDna.IntelliSense;
+using System.Linq;
 
 namespace Excel_Additions
 {
@@ -8,16 +9,19 @@ namespace Excel_Additions
     {
         public void AutoOpen()
         {
+            IntelliSenseServer.Install();
             RegisterFunctions();
         }
 
         public void AutoClose()
         {
+            IntelliSenseServer.Uninstall();
         }
 
         public void RegisterFunctions()
         {
             ExcelRegistration.GetExcelFunctions()
+                             .ProcessParamsRegistrations()
                              .Select(UpdateHelpTopic)
                              .RegisterFunctions();
         }
@@ -26,15 +30,6 @@ namespace Excel_Additions
         {
             funcReg.FunctionAttribute.HelpTopic = "http://www.bing.com";
             return funcReg;
-        }
-    }
-
-    public class Functions
-    {
-        [ExcelFunction(HelpTopic = "http://www.google.com")]
-        public static object SayHello()
-        {
-            return "Hello!!!";
         }
     }
 }
