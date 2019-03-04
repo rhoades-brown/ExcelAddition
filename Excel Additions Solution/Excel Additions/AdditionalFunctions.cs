@@ -1,7 +1,9 @@
 ﻿using ExcelDna.Integration;
 using System;
 using System.Collections;
+using System.Diagnostics;
 using System.Linq;
+using System.Reflection;
 
 namespace Excel_Additions
 {
@@ -101,26 +103,36 @@ namespace Excel_Additions
             foreach (var value in values)
             {
                 if (arrayTypes.Contains(value.GetType()))
-                {
                     if (!(LoopandReturnError(value as object[,])))
-                    {
                         return true;
-                    }
-                }
-                else if (value.GetType() == typeof(ExcelError))
-                {
-                    return true;
-                }
+                    else if (value.GetType() == typeof(ExcelError))
+                        return true;
             }
 
             return false;
         }
 
         [ExcelFunction(
-            Description = "A test function, used to return the alphabet in an array formula",
+            Description = "Returns the vesrion number of the module as a string",
             Category = "Text",
-            ExplicitRegistration = true
+            IsVolatile = true
         )]
+        public static bool TESTVERSIONNUMBER(string VersionNumber)
+        {
+            try
+            {
+                return Assembly.GetExecutingAssembly().GetName().Version >= Version.Parse(VersionNumber);
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        [ExcelFunction(Description = "Returns the vesrion number of the module as a string", Category = "Text", IsVolatile = true)]
+        public static string GETVERSIONNUMBER() => Assembly.GetExecutingAssembly().GetName().Version.ToString();
+
+        [ExcelFunction(Description = "A test function, used to return the alphabet in an array formula", Category = "Text", ExplicitRegistration = true)]
         public static object[] RETURNALPHABET() => Enumerable.Range('A', 26).Select(x => ((char)x).ToString()).ToArray();
     }
 }

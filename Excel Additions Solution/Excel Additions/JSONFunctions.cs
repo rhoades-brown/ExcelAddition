@@ -18,9 +18,7 @@ namespace Excel_Additions
             if (sourceObject.SelectToken(elements[0]) != null)
             {
                 if (elements.Length == 1)
-                {
                     sourceObject.Add(elements[0], propertyObject);
-                }
                 else
                 {
                     RecurseObject(
@@ -34,9 +32,7 @@ namespace Excel_Additions
             else
             {
                 if (elements.Length == 1)
-                {
                     sourceObject.Add(elements[0], propertyObject);
-                }
                 else
                 {
                     JObject newObject = new JObject();
